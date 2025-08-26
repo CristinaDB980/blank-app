@@ -6,7 +6,7 @@ Die App basiert auf einer interaktiven Checkliste und Visualisierung (Graphviz) 
 ---
 
 ## 🚀 Live-Demo
-👉 [Hier klicken, um die App im Browser zu starten](https://<dein-name>-<repo>.streamlit.app)  
+👉 [Hier klicken, um die App im Browser zu starten](https://cristinadb980-blank-app.streamlit.app)  
 *(Link funktioniert, sobald das Repo über **Streamlit Community Cloud** deployed ist.)*
 
 ---
@@ -20,5 +20,5 @@ Die App basiert auf einer interaktiven Checkliste und Visualisierung (Graphviz) 
 ### Installation
 1. Repository klonen:
    ```bash
-   git clone https://github.com/<dein-user>/<dein-repo>.git
-   cd <dein-repo>
+   git clone https://github.com/CristinaDB980/blank-app.git
+   cd blank-app
