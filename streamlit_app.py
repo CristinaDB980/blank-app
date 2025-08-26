@@ -152,12 +152,6 @@ for key in ["phase0_complete", "gate1_complete", "phase1_complete", "gate2_compl
 
 EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
 
-# === Prozessübersicht" ===
-try:
-    from graphviz import Digraph
-    GV = True
-except Exception:
-    GV = False
 
 # Schritte & Labels 
 _STEPS_V = [
@@ -202,7 +196,6 @@ def _current_idx_v() -> int:
             return max(0, i-1)
     return len(_order) - 1
 
-
 main, aside = st.columns([7, 3], gap="small")  
 
 with aside:
@@ -211,67 +204,76 @@ with aside:
 
     idx = _current_idx_v()
 
-    if GV:
-        g = Digraph("sg_overview_vertical_compact")
-        g.attr(rankdir="TB", splines="polyline")
-        # schmal + hoch; vor dem Zeichnen setzen
-        g.attr("graph", margin="0.02", size="0.80,2.0", dpi="60")
-        g.attr("node",  fontname="Inter, Helvetica, Arial", fontsize="12")
-        g.attr("edge",  arrowsize="0.6")
-
-        # Farben: fertig = grün, aktuell = grau, offen = weiß
+    # --- Prozessübersicht als DOT (ohne Python-Graphviz) ---
+    def build_dot_process(steps, current_idx, is_done_fn):
+        # Farben
         COLOR_DONE_NODE, COLOR_DONE_BORDER = "#2ECC71", "#1E8449"
         COLOR_CURRENT,   COLOR_BORDER_CUR  = "#ECEFF1", "#9E9E9E"
-        COLOR_PENDING = "white"
+        COLOR_PENDING,   COLOR_BORDER_PEN  = "white",   "#2C3E50"
         EDGE_DONE, EDGE_CURRENT, EDGE_PENDING = "#1E8449", "#9E9E9E", "#CFD8DC"
 
-        for i, s in enumerate(_STEPS_V):
-            is_current = (i == idx)
-            is_done    = _done_v(s["key"])
+        lines = []
+        lines.append('digraph SG {')
+        lines.append('  rankdir=LR; splines=polyline;')
+        lines.append('  graph [margin="0.1", dpi="72"];')
+        lines.append('  node  [fontname="Inter, Helvetica, Arial", fontsize="12"];')
+        lines.append('  edge  [arrowsize="0.6"];')
+
+        for i, s in enumerate(steps):
+            is_done = is_done_fn(s["key"])
+            is_cur  = (i == current_idx) and not is_done
 
             if is_done:
                 fill, border = COLOR_DONE_NODE, COLOR_DONE_BORDER
-            elif is_current:
+            elif is_cur:
                 fill, border = COLOR_CURRENT, COLOR_BORDER_CUR
             else:
-                fill, border = COLOR_PENDING, "#2C3E50"
+                fill, border = COLOR_PENDING, COLOR_BORDER_PEN
 
-            node_kwargs = {"style": "filled", "fillcolor": fill, "color": border}
-            if s.get("xlabel"):
-                node_kwargs["xlabel"] = s["xlabel"]
+            # gemeinsame Node-Attribute
+            common = f'style="filled", fillcolor="{fill}", color="{border}"'
+            xlabel = f', xlabel="{s.get("xlabel","")}"' if s.get("xlabel") else ""
 
-            # noch schmalere Nodes
+            # Shapes & kompaktes Format wie in deinem Bild
             if s["type"] in ("start","end"):
-                g.node(s["key"], s["label"], shape="circle",  width="0.60", height="0.60", **node_kwargs)
+                shape = 'circle'
+                size  = 'width="0.8", height="0.8"'
             elif s["type"] == "gate":
-                g.node(s["key"], s["label"], shape="diamond", width="0.70", height="0.50", **node_kwargs)
-            else:  # phase
-                g.node(s["key"], s["label"], shape="box",     width="1.00", height="0.40", **node_kwargs)
+                shape = 'diamond'
+                size  = 'width="0.9", height="0.7"'
+            else:
+                shape = 'box'
+                size  = 'width="1.2", height="0.6"'
 
-            if i < len(_STEPS_V)-1:
-                if is_done:          edge_color, pen = EDGE_DONE, "2"
-                elif is_current:     edge_color, pen = EDGE_CURRENT, "2"
-                else:                edge_color, pen = EDGE_PENDING, "1"
-                g.edge(s["key"], _STEPS_V[i+1]["key"], color=edge_color, penwidth=pen)
+            label = s["label"].replace('\n', '\\n')
+            lines.append(f'  {s["key"]} [label="{label}", shape="{shape}", {size}, {common}{xlabel}];')
 
-        # WICHTIG: als DOT-Source rendern → Streamlit skaliert sauber
-        st.graphviz_chart(g.source, use_container_width=True)
+            # Kanten einfärben
+            if i < len(steps) - 1:
+                if is_done:
+                    edge_color, pen = EDGE_DONE, "2"
+                elif is_cur:
+                    edge_color, pen = EDGE_CURRENT, "2"
+                else:
+                    edge_color, pen = EDGE_PENDING, "1"
+                lines.append(f'  {s["key"]} -> {steps[i+1]["key"]} [color="{edge_color}", penwidth="{pen}"];')
 
+        lines.append('}')
+        return "\n".join(lines)
 
-        # --- SVG rendern & an Spaltenbreite anpassen ---
-        st.graphviz_chart(g, use_container_width=True)
+    # DOT bauen & anzeigen
+    dot_src = build_dot_process(_STEPS_V, idx, _done_v)
 
-    else:
-        # Fallback ohne Graphviz – kompakt
-        for i, s in enumerate(_STEPS_V):
-            icon = "✅" if _done_v(s["key"]) else ("⚪️" if i == idx else "🕗")
-            label_clean = " ".join(s["label"].splitlines())
-            color = "#2ECC71" if _done_v(s["key"]) else ("#6b7280" if i == idx else "#111827")
-            st.markdown(f"<div style='color:{color}; font-size:14px'>{icon} {label_clean}</div>", unsafe_allow_html=True)
-            if s.get("xlabel"):
-                st.markdown(f"<div style='color:#6b7280; font-size:12px'>{s['xlabel']}</div>", unsafe_allow_html=True)
-            if i < len(_STEPS_V)-1:
-                st.divider()
+    # Breite in der Spalte voll ausnutzen + kein horizontales Scrollen
+    st.markdown("""
+    <style>
+    [data-testid="stGraphVizChart"] svg { width:100% !important; height:auto !important; max-width:100% !important; }
+    [data-testid="stGraphVizChart"] { overflow-x:hidden !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.graphviz_chart(dot_src, use_container_width=True)
+
 
 
 with main:
