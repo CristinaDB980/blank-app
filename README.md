@@ -1,19 +1,24 @@
-# 🎈 Blank app template
+# 📊 RPA Stage-Gate Tool (Streamlit)
 
-A simple Streamlit app template for you to modify!
+Dieses Projekt ist eine **Streamlit-App**, die ein Stage-Gate-Modell zur Bewertung und Steuerung von RPA-Prozessen bereitstellt.  
+Die App basiert auf einer interaktiven Checkliste und Visualisierung (Graphviz) und unterstützt die strukturierte Entscheidungsfindung bei der Einführung von RPA.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+---
 
-### How to run it on your own machine
+## 🚀 Live-Demo
+👉 [Hier klicken, um die App im Browser zu starten](https://<dein-name>-<repo>.streamlit.app)  
+*(Link funktioniert, sobald das Repo über **Streamlit Community Cloud** deployed ist.)*
 
-1. Install the requirements
+---
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+## ⚙️ Lokale Installation & Start
 
-2. Run the app
+### Voraussetzungen
+- Python 3.10 oder neuer
+- Git
 
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+### Installation
+1. Repository klonen:
+   ```bash
+   git clone https://github.com/<dein-user>/<dein-repo>.git
+   cd <dein-repo>
