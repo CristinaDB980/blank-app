@@ -1,3 +1,4 @@
 streamlit
 graphviz
 python-3.11
+matplotlib
