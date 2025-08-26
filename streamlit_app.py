@@ -204,9 +204,7 @@ with aside:
 
     idx = _current_idx_v()
 
-    # --- Prozessübersicht als DOT (ohne Python-Graphviz) ---
-    def build_dot_process(steps, current_idx, is_done_fn):
-        # Farben
+    def build_dot_process_vertical(steps, current_idx, is_done_fn):
         COLOR_DONE_NODE, COLOR_DONE_BORDER = "#2ECC71", "#1E8449"
         COLOR_CURRENT,   COLOR_BORDER_CUR  = "#ECEFF1", "#9E9E9E"
         COLOR_PENDING,   COLOR_BORDER_PEN  = "white",   "#2C3E50"
@@ -214,9 +212,9 @@ with aside:
 
         lines = []
         lines.append('digraph SG {')
-        lines.append('  rankdir=LR; splines=polyline;')
+        lines.append('  rankdir=TB; splines=polyline;')  # <-- Top-to-Bottom statt Left-to-Right
         lines.append('  graph [margin="0.1", dpi="72"];')
-        lines.append('  node  [fontname="Inter, Helvetica, Arial", fontsize="12"];')
+        lines.append('  node  [fontname="Inter, Helvetica, Arial", fontsize="11"];')
         lines.append('  edge  [arrowsize="0.6"];')
 
         for i, s in enumerate(steps):
@@ -230,41 +228,30 @@ with aside:
             else:
                 fill, border = COLOR_PENDING, COLOR_BORDER_PEN
 
-            # gemeinsame Node-Attribute
             common = f'style="filled", fillcolor="{fill}", color="{border}"'
             xlabel = f', xlabel="{s.get("xlabel","")}"' if s.get("xlabel") else ""
+            label  = s["label"].replace('\n', '\\n')
 
-            # Shapes & kompaktes Format wie in deinem Bild
             if s["type"] in ("start","end"):
-                shape = 'circle'
-                size  = 'width="0.8", height="0.8"'
+                shape = 'circle';  size = 'width="0.7", height="0.7"'
             elif s["type"] == "gate":
-                shape = 'diamond'
-                size  = 'width="0.9", height="0.7"'
+                shape = 'diamond'; size = 'width="0.9", height="0.6"'
             else:
-                shape = 'box'
-                size  = 'width="1.2", height="0.6"'
+                shape = 'box';     size = 'width="1.4", height="0.5"'
 
-            label = s["label"].replace('\n', '\\n')
             lines.append(f'  {s["key"]} [label="{label}", shape="{shape}", {size}, {common}{xlabel}];')
 
-            # Kanten einfärben
             if i < len(steps) - 1:
-                if is_done:
-                    edge_color, pen = EDGE_DONE, "2"
-                elif is_cur:
-                    edge_color, pen = EDGE_CURRENT, "2"
-                else:
-                    edge_color, pen = EDGE_PENDING, "1"
+                if is_done:      edge_color, pen = EDGE_DONE, "2"
+                elif is_cur:     edge_color, pen = EDGE_CURRENT, "2"
+                else:            edge_color, pen = EDGE_PENDING, "1"
                 lines.append(f'  {s["key"]} -> {steps[i+1]["key"]} [color="{edge_color}", penwidth="{pen}"];')
 
         lines.append('}')
         return "\n".join(lines)
 
-    # DOT bauen & anzeigen
-    dot_src = build_dot_process(_STEPS_V, idx, _done_v)
+    dot_src = build_dot_process_vertical(_STEPS_V, idx, _done_v)
 
-    # Breite in der Spalte voll ausnutzen + kein horizontales Scrollen
     st.markdown("""
     <style>
     [data-testid="stGraphVizChart"] svg { width:100% !important; height:auto !important; max-width:100% !important; }
@@ -273,7 +260,7 @@ with aside:
     """, unsafe_allow_html=True)
 
     st.graphviz_chart(dot_src, use_container_width=True)
-
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 with main:
