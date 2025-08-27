@@ -292,7 +292,6 @@ with main:
                 "regelbasiert": "Ist der Prozess regelbasiert?",
                 "änderung": "Wird sich der Prozess oder die verwendeten IT-Systeme in naher Zukunft ändern?",
                 "strukturiert": "Sind die verwendeten Dokumente im Prozess strukturiert aufgebaut?",
-                "häufig_mehrere": "Findet der Prozess regelmäßig statt oder bearbeiten ihn mehrere Personen?",
                 "digital": "Sind die Ein- und Ausgaben des Prozesses digital?",
                 "regelmäßig": "Wird der Prozess regelmäßig durchgeführt?",
                 "wenig_ausnahmen": "Hat der Prozess wenige Ausnahmen?",
@@ -475,7 +474,7 @@ with main:
                 ["Ja", "Nein"], horizontal=True
             )
             reuse_possible = st.radio(
-                "Gibt es die Möglichkeit, vorhandene Codes aus bestehenden Bots wiederzuverwenden?",
+                "Wurde geprüft, ob vorhandene Codes aus bestehenden Bots wiederverwendet werden können",
                 ["Ja", "Nein"], horizontal=True
             )
 
