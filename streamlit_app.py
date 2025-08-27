@@ -381,7 +381,7 @@ with main:
                 q["schon_autom"]      = st.radio("Ist der Prozess bereits in einer anderen Form automatisiert?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["komplex"]          = st.radio("Ist der Prozess komplex?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["nur_digital"]      = st.radio("Werden nur digitale Daten verwendet?", ["Ja","Nein","Unbekannt"], horizontal=True)
-                q["aenderung"]        = st.radio("Wird sich der Prozess in näherer Zukunft ändern?", ["Ja","Nein","Unbekannt"], horizontal=True)
+                q["aenderung"]        = st.radio("Bleibt der Prozess in näherer Zukunft unverändert?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["stabil_stabile_sw"]= st.radio("Ist der Prozess stabil und verwendet stabile Anwendungen?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["standardisiert"]   = st.radio("Ist der Prozess standardisiert?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["strukturierte"]    = st.radio("Verwendet der Prozess strukturierte Daten?", ["Ja","Nein","Unbekannt"], horizontal=True)
