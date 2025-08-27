@@ -34,7 +34,7 @@ with st.sidebar:
         "phase2_complete","gate3_complete","phase3_complete","gate4_complete",
         "phase4_complete","gate5_complete","phase5_complete",
         "postimpl_complete","all_complete",
-        "prozessname","prozesseigentuemer",
+        "prozessname","prozessowner",
         # Post-Impl Inputs dürfen gespeichert werden (nicht die Anzeige-Flags)
         "pic_err_rate","pic_exec_min","pic_fix_min","pic_save_min",
         "pic_runs_week","pic_hourly_cost",
@@ -270,7 +270,7 @@ with main:
     with st.expander("Phase 0: Potenzieller Prozess", expanded=True):
         st.subheader("Angaben zum Prozess")
         prozessname = st.text_input("Wie heißt der Prozess?", key="prozessname")
-        eigentuemer = st.text_input("Wer ist Prozesseigentümer?", key="prozesseigentuemer")
+        eigentuemer = st.text_input("Wer ist Prozess-Owner?", key="prozessowner")
 
 
         if st.button("✅ Phase 0 abschließen"):
