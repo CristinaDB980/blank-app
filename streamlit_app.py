@@ -292,7 +292,7 @@ with main:
                 "regelbasiert": "Ist der Prozess regelbasiert?",
                 "änderung": "Wird sich der Prozess oder die verwendeten IT-Systeme in naher Zukunft ändern?",
                 "strukturiert": "Sind die verwendeten Dokumente im Prozess strukturiert aufgebaut?",
-                "häufig_mehrere": "Wird der Prozess häufig durchgeführt oder wird er von mehr als einer Person bearbeitet?",
+                "häufig_mehrere": "Findet der Prozess regelmäßig statt oder bearbeiten ihn mehrere Personen?",
                 "digital": "Sind die Ein- und Ausgaben des Prozesses digital?",
                 "regelmäßig": "Wird der Prozess regelmäßig durchgeführt?",
                 "wenig_ausnahmen": "Hat der Prozess wenige Ausnahmen?",
