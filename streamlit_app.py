@@ -443,16 +443,6 @@ with main:
                 st.metric("RPA-Score", f"{N:.2f} / 100")
                 st.write(f"**Einstufung:** {level}")
 
-                with st.expander("Berechnungsdetails"):
-                    st.write({
-                        "Minuten pro Woche (T)": T,
-                        "T-Score (0–1)": t_score,
-                        "Ausgewählte Benefits": len(selected_benefits),
-                        "Benefit-Score (0–1)": benefit_score,
-                        "Binär/Ternär Summe (0–14)": bin_sum,
-                        "x (ungewichtet)": x,
-                        "N (normalisiert 0–100)": N,
-                    })
 
                 # --- 7) Gate-Fortschritt setzen ---
                 if N >= 50:
