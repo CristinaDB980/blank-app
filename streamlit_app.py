@@ -296,24 +296,31 @@ with main:
                 "digital": "Sind die Ein- und Ausgaben des Prozesses digital?",
                 "regelmäßig": "Wird der Prozess regelmäßig durchgeführt?",
                 "wenig_ausnahmen": "Hat der Prozess wenige Ausnahmen?",
-                "mehrere_systeme": "Werden mehrere Systeme für die Bearbeitung des Prozesses verwendet?",
                 "fehleranfällig": "Ist der Prozess anfällig für menschliche Fehler?",
                 "beschreibung": "Gibt es eine detaillierte Beschreibung über die Interaktion mit den IT-Systemen, Dateien und Schnittstellen?"
             }
 
-            antworten_g1 = {}
-            for key, frage in g1_fragen.items():
-                antworten_g1[key] = st.radio(frage, ["Ja", "Nein"], horizontal=True, key=f"g1_{key}")
+            expected = {k: "Ja" for k in g1_fragen}
+            expected["änderung"] = "Nein"
 
-            if st.button("✅ Gate 1 prüfen"):
-                if all(val == "Ja" for val in antworten_g1.values()):
-                    st.success("✅ Gate 1 bestanden. Prozess geeignet – weiter zu Phase 1.")
-                    st.session_state.gate1_complete = True
-                    st.rerun() 
-                else:
-                    st.error("❌ Prozess ist für RPA **nicht geeignet** – mindestens eine Bedingung ist nicht erfüllt.")
-                    st.session_state.gate1_complete = False
-                    st.stop()
+            antworten_g1 = {
+                    key: st.radio(frage, ["Ja", "Nein"], horizontal=True, key=f"g1_{key}")
+                    for key, frage in g1_fragen.items()
+                }
+
+            if st.button("✅ Gate 1 prüfen", key="btn_gate1_check"):
+                    falsch = [g1_fragen[k] for k, v in antworten_g1.items() if v != expected[k]]
+
+                    if not falsch:
+                        st.success("✅ Gate 1 bestanden. Prozess geeignet – weiter zu Phase 1.")
+                        st.session_state["gate1_complete"] = True
+                        st.rerun()
+                    else:
+                        st.session_state["gate1_complete"] = False
+                        st.error("❌ Prozess ist (noch) nicht geeignet. Bitte folgende Punkte anpassen:")
+                        for t in falsch:
+                            st.markdown(f"- {t}")
+                        st.stop()
 
     # -------------------------------------------------------------------
     # PHASE 1: Prozessanalyse / -vorbereitung
