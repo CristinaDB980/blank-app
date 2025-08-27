@@ -375,7 +375,7 @@ with main:
             ternary = {"Ja": 1.0, "Nein": 0.0, "Unbekannt": 0.5}
 
             with st.form("gate2_form"):
-                # 10 binäre/ternäre Kriterien
+                # 12 binäre/ternäre Kriterien
                 q = {}
                 q["apps_zugang"]      = st.radio("Sind alle Anwendungen / Software zugänglich?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["schon_autom"]      = st.radio("Ist der Prozess bereits in einer anderen Form automatisiert?", ["Ja","Nein","Unbekannt"], horizontal=True)
@@ -386,6 +386,8 @@ with main:
                 q["standardisiert"]   = st.radio("Ist der Prozess standardisiert?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["strukturierte"]    = st.radio("Verwendet der Prozess strukturierte Daten?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 q["begrenzte_ausn"]   = st.radio("Hat der Prozess begrenzte Ausnahmen/Alternativen?", ["Ja","Nein","Unbekannt"], horizontal=True)
+                q["mehrere_systeme"]   = st.radio("Verwendet der Prozess mehrere Systeme?", ["Ja","Nein","Unbekannt"], horizontal=True)
+                q["mehrere_personen"]  = st.radio("Wird der Prozess von mehreren Personen bearbeitet?", ["Ja","Nein","Unbekannt"], horizontal=True)
                 richtlinien           = st.radio("Sind die Richtlinien des Prozesses eindeutig und klar dokumentiert?", ["Ja","Nein","Unbekannt"], horizontal=True)
 
                 st.markdown("### Gesamtzeit des Prozesses (pro Woche)")
@@ -407,8 +409,8 @@ with main:
                 submit = st.form_submit_button("RPA-Score berechnen")
 
             if submit:
-                # --- 1) Binär/Ternär (10 + 1 für Richtlinien) ---
-                bin_sum = sum(ternary[v] for v in q.values()) + ternary[richtlinien]  # 11 Faktoren
+                # --- 1) Binär/Ternär (12 Faktoren) ---
+                bin_sum = sum(ternary[v] for v in q.values()) + ternary[richtlinien]  # 12 Faktoren
 
                 # --- 2) Gesamtzeit T = Dauer * Häufigkeit; auf 0..1 mappen gemäß Tabelle ---
                 T = float(dauer_min) * float(freq_w)  # Minuten/Woche
@@ -427,9 +429,8 @@ with main:
                 # --- 4) Gesamtscore x = (11 Binär/Ternär) + (T) + (Nutzen) = 13 Kriterien
                 x = bin_sum + t_score + benefit_score
 
-                # --- 5) Normalisieren auf 0..100 gemäß N = (x * 100) / 12
-                # In der Arbeit sind Dauer & Häufigkeit zusammengefasst; daher 12 statt 13.
-                N = round((x * 100.0) / 12.0, 2)
+                # --- 5) Normalisieren auf 0..100 
+                N = round((x * 100.0) / 14.0, 2)
 
                 # --- 6) Einordnung ---
                 if N < 50:
@@ -448,7 +449,7 @@ with main:
                         "T-Score (0–1)": t_score,
                         "Ausgewählte Benefits": len(selected_benefits),
                         "Benefit-Score (0–1)": benefit_score,
-                        "Binär/Ternär Summe (0–11)": bin_sum,
+                        "Binär/Ternär Summe (0–14)": bin_sum,
                         "x (ungewichtet)": x,
                         "N (normalisiert 0–100)": N,
                     })
@@ -460,6 +461,7 @@ with main:
                 else:
                     st.session_state["gate2_complete"] = False
                     st.error("Score < 50 → Prozess aktuell **nicht** geeignet. Bitte optimieren/prüfen.")
+
 
     # -------------------------------------------------------------------
     # PHASE 2: Design- / Entwicklungsphase (sichtbar NACH Gate 2)
