@@ -5,7 +5,7 @@ from datetime import date
 
 st.set_page_config(page_title="RPA Stage-Gate-Modell", layout="wide", initial_sidebar_state="expanded")
 
-st.title("🧾 RPA-Checkliste – Stage-Gate-Modell")
+st.title("RPA – Stage-Gate-Modell")
 st.markdown("Nur wenn ein Abschnitt abgeschlossen ist, wird der nächste sichtbar.")
 # SVG immer in Spaltenbreite skalieren
 st.markdown("""
